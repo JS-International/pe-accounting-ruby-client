@@ -112,18 +112,21 @@ module PeAccounting
       if @format == :xml
         parser = Nori.new(convert_dashes_to_underscores: false,
         empty_tag_value: "")
-        hash = parser.parse(body)
-      else
-        hash = MultiJson.load(body)
+        result = parser.parse(body)       
       end
 
       # Try to get a more proper ruby object when doing JSON 
       if @format == :json
-        while hash.is_a?(Hash) && hash.length == 1
-          hash = hash.values.first
+        result = MultiJson.load(body)
+        while result.is_a?(Hash) && result.length == 1
+          result = result.values.first
         end
       end
-      hash
+      
+      unless [:json, :xml].include?(@format)
+        result = body
+      end
+      result
     end
 
     def request(method, uri, payload = nil)

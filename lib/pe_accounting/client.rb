@@ -109,6 +109,7 @@ module PeAccounting
     end
 
     def handle_body(body)
+      byebug
       if @format == :xml
         parser = Nori.new(convert_dashes_to_underscores: false,
         empty_tag_value: "")
